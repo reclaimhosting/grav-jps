@@ -1,0 +1,55 @@
+type: install
+id: grav
+name: Grav
+homepage: https://getgrav.org/
+baseUrl: https://raw.githubusercontent.com/reclaimhosting/grav-jps/master
+logo: images/grav-logo.png
+
+description: 
+  text: Grav is a modern open source flat-file CMS.
+  
+categories:
+- apps/popular
+- apps/content-management
+
+globals:
+  password: ${fn.password}
+
+nodes:
+  nodeType: apache2
+  nodeGroup: cp
+  cloudlets: 8
+  extip: false
+  displayName: Application Server
+
+onInstall:
+  - deployArchive
+  - configSystem
+  - createUser
+
+actions:
+  deployArchive:
+    deploy:
+      archive: https://cloud-jps-archives.s3.amazonaws.com/grav-admin-v1.6.26.zip
+      name: grav-admin-v1.6.26
+      context: ROOT
+
+  configSystem:
+    cmd[cp]: |-
+      sed -i 's|;extension=gd.so|extension=gd.so|g' /etc/php.ini;
+      sudo /etc/init.d/httpd restart;
+    user: root
+     
+  createUser:
+    cmd[cp]: |-
+      touch /var/www/webroot/ROOT/user/accounts/admin.yaml;
+      printf 'email: ${user.email}\nfullname: Site Admin\ntitle: Administrator\nstate: enabled\naccess:\n  admin:\n    login: true\n    super: true\n  site:\n    login: true\npassword: ${globals.password}' > /var/www/webroot/ROOT/user/accounts/admin.yaml;
+
+ssl: true
+skipNodeEmails: true
+  
+success: | 
+  **Site URL**: [https://${env.domain}/](https://${env.domain}/)
+  **Admin URL**: [https://${env.domain}/admin](https://${env.domain}/admin)
+  **Username**: admin
+  **Password**: ${globals.password}
