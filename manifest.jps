@@ -30,8 +30,8 @@ onInstall:
 actions:
   deployArchive:
     deploy:
-      archive: https://cloud-jps-archives.s3.amazonaws.com/grav-admin-v1.6.26.zip
-      name: grav-admin-v1.6.26
+      archive: https://cloud-jps-archives.s3.amazonaws.com/grav-admin-v1.7.7.zip
+      name: grav-admin-v1.7.7
       context: ROOT
 
   configSystem:
